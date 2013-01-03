@@ -1,6 +1,5 @@
-CREATE OR REPLACE FUNCTION find_in_obj(data json, key varchar) RETURNS
+CREATE OR REPLACE FUNCTION find_in_obj(obj json, key varchar) RETURNS
 VARCHAR AS $$
-  var obj = JSON.parse(data);
   var parts = key.split('.');
 
   var part = parts.shift();
@@ -11,9 +10,8 @@ VARCHAR AS $$
   return obj;
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION find_in_obj_int(data json, key varchar) RETURNS
+CREATE OR REPLACE FUNCTION find_in_obj_int(obj json, key varchar) RETURNS
 INT AS $$
-  var obj = JSON.parse(data);
   var parts = key.split('.');
 
   var part = parts.shift();
@@ -24,9 +22,8 @@ INT AS $$
   return Number(obj);
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION find_in_obj_exists(data json, key varchar) RETURNS
+CREATE OR REPLACE FUNCTION find_in_obj_exists(obj json, key varchar) RETURNS
 BOOLEAN AS $$
-  var obj = JSON.parse(data);
   var parts = key.split('.');
 
   var part = parts.shift();

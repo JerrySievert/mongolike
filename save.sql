@@ -1,7 +1,5 @@
-CREATE OR REPLACE FUNCTION save(collection varchar, data json) RETURNS
+CREATE OR REPLACE FUNCTION save(collection varchar, obj json) RETURNS
 BOOLEAN AS $$
-  var obj = JSON.parse(data);
-
   var id = obj._id;
 
   // if there is no id, naively assume an insert
