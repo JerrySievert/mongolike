@@ -48,11 +48,11 @@ SETOF json AS $$
   where = JSON.parse(where);
 
   sql += " " + where.sql;
-  if(lim !== undefined)
+  if (lim > -1 )
   {
     sql += "limit " + lim;
   }
-  if(skip !== undefined)
+  if (skip > 0)
   {
     sql += "offset " + skip;
   }
@@ -69,3 +69,21 @@ SETOF json AS $$
   plan.free();
   return ret;
 $$ LANGUAGE plv8 STRICT;
+
+CREATE OR REPLACE FUNCTION find (collection varchar, terms json) RETURNS
+SETOF json AS $$
+  var full_find = plv8.find_function("find(varchar,json,int,int)");
+  var results = full_find(collection,terms,-1,0);
+  return results;
+$$ LANGUAGE plv8 STRICT;
+
+CREATE OR REPLACE FUNCTION find (collection varchar, terms json, lim int) RETURNS
+SETOF json AS $$
+  var full_find = plv8.find_function("find(varchar,json,int,int)");
+  var results = full_find(collection,terms,lim,0);
+  return results;
+$$ LANGUAGE plv8 STRICT;
+
+
+
+
