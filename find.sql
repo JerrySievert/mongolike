@@ -37,8 +37,9 @@ BOOLEAN AS $$
   return (obj === undefined ? 'f' : 't');
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION find (collection varchar, terms json) RETURNS
+CREATE OR REPLACE FUNCTION find (collection varchar, terms json, lim int, skip int) RETURNS
 SETOF json AS $$
+  var console = require('console');
   var table = 'col_' + collection;
   var sql = "SELECT data FROM " + table;
 
@@ -47,8 +48,17 @@ SETOF json AS $$
   where = JSON.parse(where);
 
   sql += " " + where.sql;
+  if(lim !== undefined)
+  {
+    sql += "limit " + lim;
+  }
+  if(skip !== undefined)
+  {
+    sql += "offset " + skip;
+  }
   var plan = plv8.prepare(sql, where.types);
   var rows = plan.execute(where.binds);
+  console
 
   var ret = [ ];
 
