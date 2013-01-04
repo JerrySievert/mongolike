@@ -81,7 +81,7 @@ VARCHAR AS $$
   }
     
   if (terms !== undefined) {
-    var obj = JSON.parse(terms);
+    var obj = terms;
     var keys = Object.keys(obj);
 
     for (var i = 0; i < keys.length; i ++) {

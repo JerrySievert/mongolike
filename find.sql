@@ -50,7 +50,7 @@ SETOF json AS $$
   var ret = [ ];
 
   for (var i = 0; i < rows.length; i++) {
-    ret.push(JSON.stringify(rows[i].data));
+    ret.push(rows[i].data);
   }
 
   plan.free();
