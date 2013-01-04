@@ -1,12 +1,30 @@
 CREATE OR REPLACE FUNCTION save(collection varchar, data json) RETURNS
 BOOLEAN AS $$
   var obj = JSON.parse(data);
-
   var id = obj._id;
 
   // if there is no id, naively assume an insert
   if (id === undefined) {
-    var seq = plv8.prepare("SELECT nextval('seq_col_" + collection + "') AS id");
+
+
+
+    var seq;
+    try
+    {
+      plv8.subtransaction(function(){
+        seq = plv8.prepare("SELECT nextval('seq_col_" + collection + "') AS id");
+        });
+    }
+    catch(err)
+    {
+      if (err='Error: relation "seq_col_' + collection  + '" does not exist')
+        {
+        var create_collection = plv8.find_function("create_collection");
+        res = create_collection(collection);
+        seq = plv8.prepare("SELECT nextval('seq_col_" + collection + "') AS id");
+        }
+    }
+
     var rows = seq.execute([ ]);
       
     id = rows[0].id;
