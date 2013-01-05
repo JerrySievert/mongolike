@@ -39,7 +39,6 @@ $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
 CREATE OR REPLACE FUNCTION find (collection varchar, terms json, lim int, skip int) RETURNS
 SETOF json AS $$
-  var console = require('console');
   var table = 'col_' + collection;
   var sql = "SELECT data FROM " + table;
 
@@ -58,7 +57,6 @@ SETOF json AS $$
   }
   var plan = plv8.prepare(sql, where.types);
   var rows = plan.execute(where.binds);
-  console
 
   var ret = [ ];
 
