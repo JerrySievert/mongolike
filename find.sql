@@ -55,16 +55,29 @@ SETOF json AS $$
   {
     sql += "offset " + skip;
   }
-  var plan = plv8.prepare(sql, where.types);
-  var rows = plan.execute(where.binds);
 
+
+  try
+  {
+    plv8.subtransaction(function(){
+      var plan = plv8.prepare(sql, where.types);
+      rows = plan.execute(where.binds);
+      plan.free();
+    });
+  }
+  catch(err)
+  {           
+      if (err='Error: relation "' + table + '" does not exist')
+        {
+        rows = []
+        }
+  }
   var ret = [ ];
 
   for (var i = 0; i < rows.length; i++) {
     ret.push(JSON.stringify(rows[i].data));
   }
 
-  plan.free();
   return ret;
 $$ LANGUAGE plv8 STRICT;
 

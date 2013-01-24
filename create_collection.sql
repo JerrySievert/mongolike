@@ -11,7 +11,7 @@ boolean AS $$
 
   var plan1 = plv8.prepare('INSERT INTO collection (name) VALUES ($1)', [ 'varchar' ]);
   var plan2 = plv8.prepare('CREATE TABLE col_' + collection +
-    ' (col_' + collection + '_id INT NOT NULL PRIMARY KEY, data JSON)');
+    ' (col_' + collection + '_id CHARACTER VARYING NOT NULL PRIMARY KEY, data JSON)');
   var plan3 = plv8.prepare('CREATE SEQUENCE seq_col_' + collection);
 
   var ret;
