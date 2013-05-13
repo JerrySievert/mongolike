@@ -17,7 +17,7 @@ BOOLEAN AS $$
     }
     catch(err)
     {
-      if (err='Error: relation "seq_col_' + collection  + '" does not exist')
+      if (err == 'Error: relation "seq_col_' + collection  + '" does not exist')
         {
         var create_collection = plv8.find_function("create_collection");
         res = create_collection(collection);
