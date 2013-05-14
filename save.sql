@@ -3,43 +3,41 @@ BOOLEAN AS $$
   var obj = JSON.parse(data);
   var id = obj._id;
 
-  // if there is no id, naively assume an insert
-  if (id === undefined) {
+  // First, lets try an update, see if that works. If so, then the data must exist ;)
+  // We will do it in an tranaction, so we can create the collection if it doesnt exist
 
-
-
-    var seq;
-    try
-    {
-      plv8.subtransaction(function(){
-        seq = plv8.prepare("SELECT nextval('seq_col_" + collection + "') AS id");
-        });
-    }
-    catch(err)
-    {
-      if (err == 'Error: relation "seq_col_' + collection  + '" does not exist')
-        {
+  try {
+    plv8.subtransaction(function() {
+      var update = plv8.prepare("UPDATE col_" + collection + " SET data = $1 WHERE col_" + collection + "_id = $2", [ 'json', 'character varying' ]);
+      res = update.execute([ data, id ]);
+    });
+  } catch(err) {
+      if (err == 'Error: relation "seq_col_' + collection  + '" does not exist') {
         var create_collection = plv8.find_function("create_collection");
         res = create_collection(collection);
-        seq = plv8.prepare("SELECT nextval('seq_col_" + collection + "') AS id");
-        }
+        var update = plv8.prepare("UPDATE col_" + collection + " SET data = $1 WHERE col_" + collection + "_id = $2", [ 'json', 'character varying' ]);
+        res = update.execute([ data, id ]);
+      }
+    }
+  }
+
+  if (res == 0) { // If it didnt affect anything, it must be a new row. Insert.
+    var seq;
+    seq = plv8.prepare("SELECT nextval('seq_col_" + collection + "') AS id");
+
+
+    if (obj._id === undefined) {
+      var rows = seq.execute([ ]);
+      id = rows[0].id;
+      obj._id = id;
+      seq.free();
     }
 
-    var rows = seq.execute([ ]);
-      
-    id = rows[0].id;
-    obj._id = id;
-
-    seq.free();
     
     var insert = plv8.prepare("INSERT INTO col_" + collection +
-      "  (col_" + collection + "_id, data) VALUES ($1, $2)", [ 'int', 'json']);
+      "  (col_" + collection + "_id, data) VALUES ($1, $2)", [ 'character varying', 'json']);
     insert.execute([ id, JSON.stringify(obj) ]);
     insert.free();
-  } else {
-    var update = plv8.prepare("UPDATE col_" + collection +
-      " SET data = $1 WHERE col_" + collection + "_id = $2", [ 'json', 'int' ]);
-    update.execute([ data, id ]);
   }
 
   return true;
