@@ -37,7 +37,7 @@ BOOLEAN AS $$
   return (obj === undefined ? 'f' : 't');
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION find (collection varchar, terms json) RETURNS
+CREATE OR REPLACE FUNCTION find (collection varchar, terms json, lim int, skip int) RETURNS
 SETOF json AS $$
   var table = 'col_' + collection;
   var sql = "SELECT data FROM " + table;
@@ -47,15 +47,52 @@ SETOF json AS $$
   where = JSON.parse(where);
 
   sql += " " + where.sql;
-  var plan = plv8.prepare(sql, where.types);
-  var rows = plan.execute(where.binds);
+  if (lim > -1 )
+  {
+    sql += "limit " + lim;
+  }
+  if (skip > 0)
+  {
+    sql += "offset " + skip;
+  }
 
+
+  try {
+    plv8.subtransaction(function(){
+      var plan = plv8.prepare(sql, where.types);
+      rows = plan.execute(where.binds);
+      plan.free();
+    });
+  }
+  catch(err) {           
+      if (err=='Error: relation "' + table + '" does not exist')
+        {
+        rows = []
+        }
+  }
   var ret = [ ];
 
   for (var i = 0; i < rows.length; i++) {
     ret.push(JSON.stringify(rows[i].data));
   }
 
-  plan.free();
   return ret;
 $$ LANGUAGE plv8 STRICT;
+
+CREATE OR REPLACE FUNCTION find (collection varchar, terms json) RETURNS
+SETOF json AS $$
+  var full_find = plv8.find_function("find(varchar,json,int,int)");
+  var results = full_find(collection,terms,-1,0);
+  return results;
+$$ LANGUAGE plv8 STRICT;
+
+CREATE OR REPLACE FUNCTION find (collection varchar, terms json, lim int) RETURNS
+SETOF json AS $$
+  var full_find = plv8.find_function("find(varchar,json,int,int)");
+  var results = full_find(collection,terms,lim,0);
+  return results;
+$$ LANGUAGE plv8 STRICT;
+
+
+
+
