@@ -1,6 +1,6 @@
-# Mongoloid
+# Mongolike
 
-Mongoloid is an experimental MongoDB clone being built on top of PLV8 and Postgres.
+Mongolike is an experimental MongoDB clone being built on top of PLV8 and Postgres.
 
 ## Implemented (so far)
 
