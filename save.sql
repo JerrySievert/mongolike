@@ -18,7 +18,6 @@ BOOLEAN AS $$
         var update = plv8.prepare("UPDATE col_" + collection + " SET data = $1 WHERE col_" + collection + "_id = $2", [ 'json', 'character varying' ]);
         res = update.execute([ data, id ]);
       }
-    }
   }
 
   if (res == 0) { // If it didnt affect anything, it must be a new row. Insert.
