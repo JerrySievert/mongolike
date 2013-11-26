@@ -6,7 +6,7 @@ VARCHAR AS $$
   var b = [ ];
 
   var count = 1;
-  
+
   function build_clause (key, value, type) {
     var clauses = [ ],
         binds   = [ ],
@@ -79,13 +79,12 @@ VARCHAR AS $$
 
     return { clauses: clauses, binds: binds, types: types };
   }
-    
+ 
   if (terms !== undefined) {
-    var obj = JSON.parse(terms);
-    var keys = Object.keys(obj);
+    var keys = Object.keys(terms);
 
     for (var i = 0; i < keys.length; i ++) {
-      var ret = build_clause(keys[i], obj[keys[i]]);
+      var ret = build_clause(keys[i], terms[keys[i]]);
       c = c.concat(ret.clauses);
       b = b.concat(ret.binds);
       t = t.concat(ret.types);
@@ -96,6 +95,8 @@ VARCHAR AS $$
       
       sql += c.join(" AND ");
     }
+    plv8.elog(INFO,sql);
+
   }
 
   return JSON.stringify({ types: t, binds: b, sql: sql });

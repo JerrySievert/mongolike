@@ -1,9 +1,7 @@
-CREATE OR REPLACE FUNCTION runCommand (options varchar) RETURNS
+CREATE OR REPLACE FUNCTION runcommand (options json) RETURNS
 json AS $$
-  options = JSON.parse(options);
-
   var map, reduce, finalize;
-  
+  plv8.elog(INFO,"fooo");
   if (options.map) {
     eval("map = " + options.map);
   }
@@ -15,7 +13,7 @@ json AS $$
   }
 
   if (map === undefined || reduce === undefined) {
-    throw new Error("not code");
+    throw new Error("not 11 code");
   }
 
   var emitted = { };
@@ -34,8 +32,7 @@ json AS $$
 
   if (options.query) {
     var where_clause = plv8.find_function("where_clause");
-    var where = where_clause(JSON.stringify(options.query));
-    where = JSON.parse(where);
+    var where = where_clause(options.query);
     
     sql += " " + where.sql;
     plan = plv8.prepare(sql, where.types);
@@ -46,7 +43,7 @@ json AS $$
   }
 
   while (row = cursor.fetch()) {
-    map.apply(JSON.parse(row.data));
+    map.apply(row.data);
   }
 
   cursor.close();
@@ -61,22 +58,20 @@ json AS $$
     delete emitted[j];
   }
 
+
   if (finalize) {
     var final = [ ];
     for (var x in reduced) {
       final.push({ "_id": x, "value": finalize(x, reduced[x][0]) });
       delete reduced[x];
     }
-    return JSON.stringify(final);
-  } else {
+    return final;
+  } 
+  else {
     var out = [ ];
     for (var k in reduced) {
       out.push({_id: k, value: reduced[k][0] });
     }
-    
-    return JSON.stringify(out);
-  }
-
-  
-  return JSON.stringify(emitted);
+    return out;
+  }  
 $$ LANGUAGE plv8 STRICT;
