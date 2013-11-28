@@ -81,11 +81,10 @@ VARCHAR AS $$
   }
     
   if (terms !== undefined) {
-    var obj = JSON.parse(terms);
-    var keys = Object.keys(obj);
+    var keys = Object.keys(terms);
 
     for (var i = 0; i < keys.length; i ++) {
-      var ret = build_clause(keys[i], obj[keys[i]]);
+      var ret = build_clause(keys[i], terms[keys[i]]);
       c = c.concat(ret.clauses);
       b = b.concat(ret.binds);
       t = t.concat(ret.types);

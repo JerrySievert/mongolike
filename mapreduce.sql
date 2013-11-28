@@ -1,7 +1,5 @@
-CREATE OR REPLACE FUNCTION runCommand (options varchar) RETURNS
+CREATE OR REPLACE FUNCTION runCommand (options json) RETURNS
 json AS $$
-  options = JSON.parse(options);
-
   var map, reduce, finalize;
   
   if (options.map) {
@@ -34,8 +32,7 @@ json AS $$
 
   if (options.query) {
     var where_clause = plv8.find_function("where_clause");
-    var where = where_clause(JSON.stringify(options.query));
-    where = JSON.parse(where);
+    var where = where_clause(options.query);
     
     sql += " " + where.sql;
     plan = plv8.prepare(sql, where.types);
@@ -46,7 +43,7 @@ json AS $$
   }
 
   while (row = cursor.fetch()) {
-    map.apply(JSON.parse(row.data));
+    map.apply(row.data);
   }
 
   cursor.close();
@@ -67,16 +64,13 @@ json AS $$
       final.push({ "_id": x, "value": finalize(x, reduced[x][0]) });
       delete reduced[x];
     }
-    return JSON.stringify(final);
+    return final;
   } else {
     var out = [ ];
     for (var k in reduced) {
       out.push({_id: k, value: reduced[k][0] });
     }
     
-    return JSON.stringify(out);
+    return out;
   }
-
-  
-  return JSON.stringify(emitted);
 $$ LANGUAGE plv8 STRICT;

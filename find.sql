@@ -1,40 +1,37 @@
 CREATE OR REPLACE FUNCTION find_in_obj(data json, key varchar) RETURNS
 VARCHAR AS $$
-  var obj = JSON.parse(data);
   var parts = key.split('.');
 
   var part = parts.shift();
-  while (part && (obj = obj[part]) !== undefined) {
+  while (part && (data = data[part]) !== undefined) {
     part = parts.shift();
   }
 
-  return obj;
+  return data;
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
 CREATE OR REPLACE FUNCTION find_in_obj_int(data json, key varchar) RETURNS
 INT AS $$
-  var obj = JSON.parse(data);
   var parts = key.split('.');
 
   var part = parts.shift();
-  while (part && (obj = obj[part]) !== undefined) {
+  while (part && (data = data[part]) !== undefined) {
     part = parts.shift();
   }
 
-  return Number(obj);
+  return Number(data);
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
 CREATE OR REPLACE FUNCTION find_in_obj_exists(data json, key varchar) RETURNS
 BOOLEAN AS $$
-  var obj = JSON.parse(data);
   var parts = key.split('.');
 
   var part = parts.shift();
-  while (part && (obj = obj[part]) !== undefined) {
+  while (part && (data = data[part]) !== undefined) {
     part = parts.shift();
   }
 
-  return (obj === undefined ? 'f' : 't');
+  return (data === undefined ? 'f' : 't');
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
 CREATE OR REPLACE FUNCTION find (collection varchar, terms json, lim int, skip int) RETURNS
