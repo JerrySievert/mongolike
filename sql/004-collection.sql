@@ -1,14 +1,5 @@
-CREATE TABLE collection (
-  collection_id SERIAL NOT NULL PRIMARY KEY,
-  name VARCHAR
-);
-
-CREATE UNIQUE INDEX idx_collection_constraint ON collection (name);
-
 CREATE OR REPLACE FUNCTION create_collection(collection varchar) RETURNS
 boolean AS $$
-
-
   var plan1 = plv8.prepare('INSERT INTO collection (name) VALUES ($1)', [ 'varchar' ]);
   var plan2 = plv8.prepare('CREATE TABLE col_' + collection +
     ' (col_' + collection + '_id CHARACTER VARYING NOT NULL PRIMARY KEY, data JSON)');

@@ -5,7 +5,32 @@ var argv = require('optimist')
     .demand('d')
     .alias('d', 'database')
     .describe('d', 'Database to be installed in')
+    .demand('h')
+    .alias('h', 'host')
+    .describe('h', 'Database host')
+    .default('p', '5432')
+    .alias('p', 'port')
+    .describe('u', 'User')
+    .default('u', 'postgres')
+    .alias('u', 'user')
     .argv,
     pg   = require('pg'),
     fs   = require('fs');
 
+var collection = fs.readFileSync(__dirname + "/../sql/collection.sql", "utf8");
+
+var conString = "postgres://" + argv.u + ":" + argv.p + "@" + argv.h + "/" + argv.d;
+
+var client = new pg.Client(conString);
+client.connect(function (err) {
+  if (err) {
+    return console.error('could not connect to postgres', err);
+  }
+  client.query(collection);
+  client.query('SELECT NOW() AS "theTime"', function(err, result) {
+    if (err) {
+      return console.error('error running query', err);
+    }
+    client.end();
+  });
+});
