@@ -17,20 +17,42 @@ var argv = require('optimist')
     pg   = require('pg'),
     fs   = require('fs');
 
-var collection = fs.readFileSync(__dirname + "/../sql/collection.sql", "utf8");
+
+
+var sqlFiles = fs.readdirSync(__dirname + "/../sql/").sort();
 
 var conString = "postgres://" + argv.u + ":" + argv.p + "@" + argv.h + "/" + argv.d;
 
+// verify connectivity
 var client = new pg.Client(conString);
 client.connect(function (err) {
   if (err) {
     return console.error('could not connect to postgres', err);
   }
-  client.query(collection);
+
   client.query('SELECT NOW() AS "theTime"', function(err, result) {
     if (err) {
       return console.error('error running query', err);
     }
-    client.end();
+
+    readAndApply(client, sqlFiles, 0);
   });
 });
+
+function readAndApply (client, sqlFiles, current) {
+  if (current === sqlFiles.length) {
+    console.log("Complete");
+    client.end();
+  } else {
+    console.log("Applying " + sqlFiles[current]);
+    var file = fs.readFileSync(__dirname + "/../sql/" + sqlFiles[current], "utf8");
+
+    client.query(file, function (err, result) {
+      if (err) {
+        console.log("Error: " + err);
+      } else {
+        readAndApply(client, sqlFiles, current + 1);
+      }
+    });
+  }
+}
