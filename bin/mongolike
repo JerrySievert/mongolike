@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+var argv = require('optimist')
+    .usage('Install Mongolike.\nUsage: $0')
+    .demand('d')
+    .alias('d', 'database')
+    .describe('d', 'Database to be installed in')
+    .argv,
+    pg   = require('pg'),
+    fs   = require('fs');
+

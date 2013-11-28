@@ -1,0 +1,37 @@
+{
+  "name": "mongolike",
+  "version": "0.1.0",
+  "description": "MongoDB Clone on top of Postgres",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/JerrySievert/mongolike.git"
+  },
+  "keywords": [
+    "mongo",
+    "mongodb",
+    "postgres",
+    "pg",
+    "db",
+    "database"
+  ],
+  "author": "Jerry Sievert <code@legitimatesounding.com> (http://legitimatesounding.com/blog/)",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/JerrySievert/mongolike/issues"
+  },
+  "dependencies": {
+    "pg": "~2.8.3",
+    "optimist": "~0.6.0"
+  },
+  "preferGlobal": "true",
+  "bin": {
+    "mongoline": "./bin/mongolike"
+  }
+}
