@@ -44,13 +44,12 @@ SETOF json AS $$
   where = JSON.parse(where);
 
   sql += " " + where.sql;
-  if (lim > -1 )
-  {
-    sql += "limit " + lim;
+  if (lim > -1 ) {
+    sql += "LIMIT " + lim;
   }
-  if (skip > 0)
-  {
-    sql += "offset " + skip;
+
+  if (skip > 0) {
+    sql += "OFFSET " + skip;
   }
 
 
@@ -60,13 +59,12 @@ SETOF json AS $$
       rows = plan.execute(where.binds);
       plan.free();
     });
+  } catch(err) {           
+    if (err=='Error: relation "' + table + '" does not exist') {
+      rows = [ ];
+    }
   }
-  catch(err) {           
-      if (err=='Error: relation "' + table + '" does not exist')
-        {
-        rows = []
-        }
-  }
+
   var ret = [ ];
 
   for (var i = 0; i < rows.length; i++) {
