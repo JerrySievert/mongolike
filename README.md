@@ -22,8 +22,8 @@ Visit [http://code.google.com/p/plv8js/wiki/PLV8](http://code.google.com/p/plv8j
 
 The easy way to install is to use `node.js`.
 
-    $ npm install
-    $ bin/mongolike -d yourdb
+    $ npm install -g mongolike
+    $ mongolike-install -d yourdb
 
 #### The Slight Less Easy Way
 
