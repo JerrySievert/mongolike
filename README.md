@@ -9,7 +9,9 @@ Mongolike is an experimental MongoDB clone being built on top of PLV8 and Postgr
 * save()
 * find()
 * runCommand() (Map/Reduce)
-* ensureIndex
+* ensureIndex()
+* removeIndex()
+* getIndexes()
 
 ## Installing
 
@@ -148,7 +150,33 @@ Creates a new index on a collection.
 
 _Example:_
 
-    SELECT ensureIndex('test', { "foo", "bar" }', '{ "unique": true }');
+    SELECT ensureIndex('test', '{ "foo", "bar" }', '{ "unique": true }');
+
+### removeIndex(collection, name)
+
+Removes an index from a collection by name.
+
+_Example:_
+
+    SELECT removeIndex('test', 'idx_col_woo_foo');
+
+### removeIndex(collection, terms)
+
+Removes an index from a collection by terms.
+
+*NOTE* in order to remove an index with `terms` you MUST cast the query due to how Postgres handles JSON.
+
+_Example:_
+
+    SELECT removeIndex('test', '{ "foo", "bar" }'::json);
+
+### getIndexes(collection)
+
+Retrieves all indexes for a given collection.
+
+_Example:_
+
+    SELECT getIndexes('test');
 
 ## Importing the Data
 
