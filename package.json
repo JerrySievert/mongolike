@@ -1,6 +1,6 @@
 {
   "name": "mongolike",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MongoDB Clone on top of Postgres",
   "main": "index.js",
   "directories": {
