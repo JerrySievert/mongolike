@@ -31,12 +31,16 @@ BOOLEAN AS $$
         idx += ")";
 
         plv8.execute(idx);
-        var idx_plan = plv8.prepare("INSERT INTO collection_index (collection, name) VALUES ($1, $2)", [ 'varchar', 'varchar' ]);
-        idx_plan.execute([ collection, index ]);
+
+        var idx_plan = plv8.prepare("INSERT INTO collection_index (collection, name, key) VALUES ($1, $2, $3)", [ 'varchar', 'varchar', 'json' ]);
+
+        idx_plan.execute([ collection, index, obj ]);
+
         idx_plan.free();
       });
     } catch (err) {
       plan.free();
+
       return false;
     }
   }
