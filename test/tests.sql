@@ -109,7 +109,32 @@ var tests = [
     teardown: function ( ) {
       plv8.execute("SELECT remove('test', '{ \"foo\": \"bar\" }')");
     }
+  },
+  {
+    setup: function ( ) {
+      plv8.execute("SELECT ensureIndex('test', '{ \"foo\": \"bar\" }')");
+    },
+    'ensureIndex should create an index': function ( ) {
+      var result = plv8.execute("SELECT * FROM collection_index");
+      assert.equal(result.length, 1, "ensureIndex should create an index");
+    },
+    teardown: function ( ) {
+      plv8.execute("SELECT removeIndex('test', '{ \"foo\": \"bar\" }'::json)");
+    }
+  },
+  {
+    setup: function ( ) {
+      plv8.execute("SELECT ensureIndex('test', '{ \"foo\": \"bar\" }')");
+    },
+    'removeIndex should remove an index': function ( ) {
+      plv8.execute("SELECT removeIndex('test', '{ \"foo\": \"bar\" }'::json)");
+      var result = plv8.execute("SELECT * FROM collection_index");
+      assert.equal(result.length, 0, "removeIndex should remove an index");
+    },
+    teardown: function ( ) {
+    }
   }
+
 ];
 
 test_setup();
