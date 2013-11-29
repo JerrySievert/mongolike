@@ -9,6 +9,7 @@ Mongolike is an experimental MongoDB clone being built on top of PLV8 and Postgr
 * save()
 * find()
 * runCommand() (Map/Reduce)
+* ensureIndex
 
 ## Installing
 
@@ -140,6 +141,14 @@ _Example:_
           \"dist\": min_dist
         };
       }" }');
+
+### ensureIndex(collection, terms /*, type */)
+
+Creates a new index on a collection.
+
+_Example:_
+
+    SELECT ensureIndex('test', { "foo", "bar" }', '{ "unique": true }');
 
 ## Importing the Data
 
