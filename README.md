@@ -29,7 +29,15 @@ The easy way to install is to use `node.js`.
 
     $ psql yourdb <sql/*.sql
 
-## Importing the data
+## Running Tests
+
+Mongolike includes a test suite and a test runner.
+
+    $ test/test_runner.js -d yourdb
+
+Additional tests can be added to `test/tests.sql`.
+
+## Importing the Data
 
 I have included a modest amount of data for testing and benchmarking, both for Postgres and for MongoDB (1,706,873 rows).
 
