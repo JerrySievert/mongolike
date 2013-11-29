@@ -1,8 +1,10 @@
 CREATE OR REPLACE FUNCTION mongolike_tests ( ) RETURNS
 json AS $$
 
+// test statuses stored here
 var test_statuses = [ ];
 
+// assertion failure
 function fail (actual, expected, message, operator) {
   test_statuses.push({
     actual:   actual,
@@ -13,54 +15,42 @@ function fail (actual, expected, message, operator) {
   });
 }
 
-function ok (actual, expected) {
+// assertion ok
+function ok (actual, expected, message) {
   test_statuses.push({
     actual:   actual,
     expected: expected,
-    status:   "pass"
+    status:   "pass",
+    message:  message
   });
 }
 
+// assert methods
 var assert = {
   equal: function (actual, expected, message) {
     if (actual != expected) {
       fail(actual, expected, message, "==");
     } else {
-      ok(actual, expected);
+      ok(actual, expected, message);
     }
   }
 };
 
-function execute (sql, args) {
-  var plan = plv8.prepare(sql);
 
-  var status = true;
-  try {
-    plv8.subtransaction(function ( ) {
-      rows = plan.execute(args ? args : [ ]);
-    });
-  } catch(err) {
-    test_statuses.push({
-      status: "fail",
-      error:  "Unable to create collection"
-    });
-
-    status = false;
-  }
-
-  plan.free();
-
-  return status;
-}
-
+// test_setup is run before any tests run
+// create the test collection
 function test_setup ( ) {
   plv8.execute("SELECT create_collection('test')");
 }
 
+// test_teardown is run after all tests have completed
+// remove the collection
 function test_teardown ( ) {
   plv8.execute("SELECT drop_collection('test')");
 }
 
+// tests to run, setup is run first, then any tests
+// teardown is run after the tests are run
 var tests = [
   {
     setup: function ( ) {
@@ -70,14 +60,49 @@ var tests = [
       plv8.execute("SELECT remove('test', '{ \"foo\": \"bar\" }')");
     },
     'save should work': function ( ) {
-      var result = plv8.execute("SELECT * FROM test");
+      var result = plv8.execute("SELECT * FROM col_test");
       assert.equal(result.length, 1, "save should work");
+    }
+  },
+  {
+    setup: function ( ) {
+      plv8.execute("SELECT save('test', '{ \"foo\": \"bar\" }')");
+      plv8.execute("SELECT remove('test', '{ \"foo\": \"bar\" }')");
+    },
+    'remove should work': function ( ) {
+      var result = plv8.execute("SELECT * FROM col_test");
+      assert.equal(result.length, 0, "remove should work");
+    }
+  },
+  {
+    setup: function ( ) {
+      plv8.execute("SELECT save('test', '{ \"foo\": \"bar\" }')");
+    },
+    'find should work with an empty search': function ( ) {
+      var result = plv8.execute("SELECT find('test', '{ }')");
+      assert.equal(result.length, 1, "find should work with an empty search");
+    },
+    teardown: function ( ) {
+      plv8.execute("SELECT remove('test', '{ \"foo\": \"bar\" }')");
+    }
+  },
+  {
+    setup: function ( ) {
+      plv8.execute("SELECT save('test', '{ \"foo\": \"bar\" }')");
+    },
+    'find should work with a real search': function ( ) {
+      var result = plv8.execute("SELECT find('test', '{ \"foo\": \"bar\" }')");
+      assert.equal(result.length, 1, "find should work with a real search");
+    },
+    teardown: function ( ) {
+      plv8.execute("SELECT remove('test', '{ \"foo\": \"bar\" }')");
     }
   }
 ];
 
 test_setup();
 
+// iterate through the tests, running each
 for (var i = 0; i < tests.length; i++) {
   var test = tests[i];
   var keys = Object.keys(test).filter(function (item) {
@@ -95,7 +120,7 @@ for (var i = 0; i < tests.length; i++) {
 
   // run the tests
   for (var j = 0; j < keys.length; j++) {
-    test[i]();
+    test[keys[j]]();
   }
 
   // run the teardown
