@@ -90,6 +90,18 @@ var tests = [
     setup: function ( ) {
       plv8.execute("SELECT save('test', '{ \"foo\": \"bar\" }')");
     },
+    'find should work with just a collection': function ( ) {
+      var result = plv8.execute("SELECT find('test')");
+      assert.equal(result.length, 1, "find should work just a collection");
+    },
+    teardown: function ( ) {
+      plv8.execute("SELECT remove('test', '{ \"foo\": \"bar\" }')");
+    }
+  },
+  {
+    setup: function ( ) {
+      plv8.execute("SELECT save('test', '{ \"foo\": \"bar\" }')");
+    },
     'find should work with a real search': function ( ) {
       var result = plv8.execute("SELECT find('test', '{ \"foo\": \"bar\" }')");
       assert.equal(result.length, 1, "find should work with a real search");

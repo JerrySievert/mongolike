@@ -32,7 +32,7 @@ client.connect(function (err) {
     return;
   }
 
-  runTests(client);
+  loadTests(client);
 });
 
 function loadTests (client) {
