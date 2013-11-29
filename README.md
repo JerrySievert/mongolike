@@ -6,8 +6,8 @@ Mongolike is an experimental MongoDB clone being built on top of PLV8 and Postgr
 
 * create_collection()
 * drop_collection()
-* find()
 * save()
+* find()
 * runCommand() (Map/Reduce)
 
 ## Installing
@@ -36,6 +36,108 @@ Mongolike includes a test suite and a test runner.
     $ test/test_runner.js -d yourdb
 
 Additional tests can be added to `test/tests.sql`.
+
+## Using
+
+All commands must be prefixed by `SELECT`, and are modified slightly to work in the Postgres environment.
+
+### create_collection(collection)
+
+Create a collection.
+
+_Example:_
+
+    SELECT create_collection('test');
+
+### drop_collection(collection)
+
+Drop a collection.
+
+_Example:_
+
+    SELECT drop_collection('test');
+
+### save(collection, object)
+
+Save an object into a collection.
+
+_Example:_
+
+    SELECT save('test', '{ "foo": "bar" }');
+
+### find(collection /*, terms, limit, skip */)
+
+Find an object, with optional `terms`, `limit`, and `skip`.
+
+_Example:_
+
+    SELECT find('test', '{ "type": { "$in": [ "food", "snacks" ] } }');
+
+### runCommand(command)
+
+Run a command on the Database.  Currently only `mapReduce` is supported.
+
+_Example:_
+
+    SELECT runCommand('{
+      "map": "function MapCode() {
+        emit(this.Country, {
+          \"data\": [
+            {
+              \"city\": this.City, 
+              \"lat\":  this.Latitude, 
+              \"lon\":  this.Longitude
+            }
+          ]
+        });
+      }",
+      "reduce": "function ReduceCode(key, values) {
+        var reduced = {
+          \"data\": [ ]
+        };
+        for (var i in values) {
+          var inter = values[i];
+          for (var j in inter.data) {
+            reduced.data.push(inter.data[j]);
+          }
+        }
+        return reduced;
+      }",
+      "mapreduce": "cities",
+      "finalize": "function Finalize(key, reduced) {
+        if (reduced.data.length == 1) {
+          return {
+            \"message\" : \"This Country contains only 1 City\"
+          };
+        }
+    
+        var min_dist = 999999999999;
+        var city1 = { \"name": "\" };
+        var city2 = { \"name\": \"\" };
+        var c1;
+        var c2;
+        var d;
+    
+        for (var i in reduced.data) {
+          for (var j in reduced.data) {
+            if (i >= j) continue;
+            c1 = reduced.data[i];
+            c2 = reduced.data[j];
+            d = Math.sqrt((c1.lat-c2.lat)*(c1.lat-c2.lat)+(c1.lon-c2.lon)*(c1.lon-c2.lon));
+    
+            if (d < min_dist && d > 0) {
+              min_dist = d;
+              city1 = c1;
+              city2 = c2;
+            }
+          }
+        }
+        return {
+          \"city1\": city1.city,
+          \"city2\": city2.city,
+          \"dist\": min_dist
+        };
+      }" }');
 
 ## Importing the Data
 
