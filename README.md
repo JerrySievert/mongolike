@@ -77,6 +77,8 @@ _Example:_
 
 Run a command on the Database.  Currently only `mapReduce` is supported.
 
+*NOTE* The JSON object cannot have carriage returns, the example below does for readability.
+
 _Example:_
 
     SELECT runCommand('{
@@ -112,7 +114,7 @@ _Example:_
         }
     
         var min_dist = 999999999999;
-        var city1 = { \"name": "\" };
+        var city1 = { \"name\": \"\" };
         var city2 = { \"name\": \"\" };
         var c1;
         var c2;
