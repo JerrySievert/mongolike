@@ -30,14 +30,12 @@ BOOLEAN AS $$
         idx += parts.join(", ");
         idx += ")";
 
-        plv8.elog(NOTICE, idx);
         plv8.execute(idx);
         var idx_plan = plv8.prepare("INSERT INTO collection_index (collection, name) VALUES ($1, $2)", [ 'varchar', 'varchar' ]);
         idx_plan.execute([ collection, index ]);
         idx_plan.free();
       });
     } catch (err) {
-      plv8.elog(NOTICE, err);
       plan.free();
       return false;
     }
