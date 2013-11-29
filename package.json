@@ -32,6 +32,6 @@
   },
   "preferGlobal": "true",
   "bin": {
-    "mongoline": "./bin/mongolike"
+    "mongolike-install": "./bin/mongolike-install"
   }
 }

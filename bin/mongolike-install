@@ -5,7 +5,7 @@ var argv = require('optimist')
     .demand('d')
     .alias('d', 'database')
     .describe('d', 'Database to be installed in')
-    .demand('h')
+    .default('h', 'localhost')
     .alias('h', 'host')
     .describe('h', 'Database host')
     .default('p', '5432')
@@ -27,7 +27,7 @@ var conString = "postgres://" + argv.u + ":" + argv.p + "@" + argv.h + "/" + arg
 var client = new pg.Client(conString);
 client.connect(function (err) {
   if (err) {
-    return console.error('could not connect to postgres', err);
+    return console.error('could not connect to postgres', err.toString());
   }
 
   client.query('SELECT NOW() AS "theTime"', function(err, result) {

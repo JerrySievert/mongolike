@@ -5,22 +5,29 @@ Mongolike is an experimental MongoDB clone being built on top of PLV8 and Postgr
 ## Implemented (so far)
 
 * create_collection()
+* drop_collection()
 * find()
 * save()
 * runCommand() (Map/Reduce)
 
 ## Installing
 
-Install PLV8 - http://code.google.com/p/plv8js/wiki/PLV8
+### Install PLV8
 
-I recommend installing V8 via these instructions: http://code.google.com/p/v8/wiki/BuildingWithGYP
+Visit [http://code.google.com/p/plv8js/wiki/PLV8](http://code.google.com/p/plv8js/wiki/PLV8) and follow the build instructions.
 
+### Install Mongolike
 
-    $ psql yourdb < create_collection.sql
-    $ psql yourdb < whereclause.sql
-    $ psql yourdb < save.sql
-    $ psql yourdb < find.sql
-    $ psql yourdb < mapreduce.sql
+#### The Easy Way
+
+The easy way to install is to use `node.js`.
+
+    $ npm install
+    $ bin/mongolike -d yourdb
+
+#### The Slight Less Easy Way
+
+    $ psql yourdb <sql/*.sql
 
 ## Importing the data
 
