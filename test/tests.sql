@@ -49,6 +49,7 @@ function test_teardown ( ) {
   plv8.execute("SELECT drop_collection('test')");
 }
 
+// [todo] - more tests
 // tests to run, setup is run first, then any tests
 // teardown is run after the tests are run
 var tests = [

@@ -35,6 +35,7 @@ client.connect(function (err) {
   loadTests(client);
 });
 
+// [todo] - move tests out of tests.sql and into their own module
 function loadTests (client) {
   client.query(tests, function (err) {
     if (err) {
