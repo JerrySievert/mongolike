@@ -1,0 +1,4 @@
+CREATE OR REPLACE FUNCTION mongolike_version () RETURNS
+VARCHAR AS $$
+  return "0.1.2";
+$$ LANGUAGE plv8 IMMUTABLE STRICT;
