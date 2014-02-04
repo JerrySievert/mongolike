@@ -47,6 +47,7 @@ function readAndApply (client, sqlFiles, current) {
     console.log("Applying " + sqlFiles[current]);
     var file = fs.readFileSync(__dirname + "/../sql/" + sqlFiles[current], "utf8");
 
+    // [todo] - check for current version, if possible, run a migration from each version instead of dropping and recreating
     client.query(file, function (err, result) {
       if (err) {
         console.log("Error: " + err);
