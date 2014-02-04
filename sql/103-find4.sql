@@ -1,4 +1,5 @@
 --- [todo] - test
+--- [todo] - add functionality to return only specific columns
 CREATE OR REPLACE FUNCTION find (collection varchar, terms json, lim int, skip int) RETURNS
 SETOF json AS $$
   var table = 'col_' + collection;
