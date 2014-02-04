@@ -25,6 +25,7 @@ BOOLEAN AS $$
         var parts = [ ];
         for (var i = 0; i < keys.length; i++) {
           parts.push("find_in_obj(data, '" + keys[i] + "')");
+          parts.push("find_in_obj_int(data, '" + keys[i] + "')");
         }
 
         idx += parts.join(", ");
