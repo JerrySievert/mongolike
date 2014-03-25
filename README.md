@@ -28,9 +28,9 @@ The easy way to install is to use `node.js`.
     $ npm install -g mongolike
     $ mongolike-install -d yourdb
 
-#### The Slight Less Easy Way
+#### The Slightly Less Easy Way
 
-    $ psql yourdb <sql/*.sql
+    $ for file in sql/*.sql; do psql yourdb < $file; done
 
 ## Running Tests
 
