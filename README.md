@@ -194,3 +194,7 @@ Importing into MongoDB
 
 
 Follow along at http://legitimatesounding.com/blog/
+
+## Alternatives
+
+Another solution for running mongo-like queries in Postgres is [pgmongo](https://github.com/thomas4019/pgmongo). It acts as a proxy which looks like a MongoDB server, but under the hood converts the queries to use SQL and Postgres' jsonb field operators.
